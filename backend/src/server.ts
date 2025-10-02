@@ -1,7 +1,8 @@
-import express from "express";
 import dotenv from "dotenv";
-import { connectDB } from "./config/db.ts";
-import productRoutes from "./routes/product.route.ts";
+import express from "express";
+
+import { connectDB } from "./config/db";
+import productRoutes from "./routes/product.route";
 
 dotenv.config();
 
