@@ -1,80 +1,61 @@
-import type { Request, Response } from "express";
 import mongoose from "mongoose";
+import { Body, Delete, Get, Path, Post, Put, Route, Tags } from "tsoa";
 
+import { ProductDto } from "@/models/product.dto";
 import Product from "@/models/product.model";
+import { ApiResponse } from "@/types/ApiResponse";
 
-export const getProducts = async (req: Request, res: Response) => {
-  try {
+import { BaseController } from "./BaseController";
+
+@Route("products")
+@Tags("Product")
+export class ProductController extends BaseController {
+  @Get()
+  public async getProducts(): Promise<ApiResponse<ProductDto[]>> {
     const products = await Product.find({});
-    res.status(200).json({ success: true, data: products });
-  } catch (error: any) {
-    console.error("Error fetching products:", error.message);
-    res.status(500).json({ success: false, message: "Server error" });
-  }
-};
-
-export const createProduct = async (req: Request, res: Response) => {
-  const product = req.body;
-  if (!product.name || !product.price || !product.image) {
-    return res
-      .status(400)
-      .json({ success: false, message: "Invalid product data" });
-  }
-  const newProduct = new Product(product);
-  try {
-    await newProduct.save();
-    res.status(201).json({ success: true, data: newProduct });
-  } catch (error: any) {
-    console.error("Error saving product:", error.message);
-    res.status(500).json({ success: false, message: "Server error" });
-  }
-};
-
-export const deleteProduct = async (req: Request, res: Response) => {
-  const { id = "" } = req.params;
-
-  if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res
-      .status(400)
-      .json({ success: false, message: "Invalid product ID" });
+    return this.success(products);
   }
 
-  try {
+  @Post()
+  public async createProduct(
+    @Body() productData: ProductDto
+  ): Promise<ApiResponse<ProductDto>> {
+    if (!productData.name || !productData.price || !productData.image) {
+      return this.fail("Invalid product data");
+    }
+    const product = new Product(productData);
+    await product.save();
+    return this.success(product);
+  }
+
+  @Delete("{id}")
+  public async deleteProduct(
+    @Path() id: string
+  ): Promise<ApiResponse<{ message: string }>> {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return this.fail("Invalid product ID");
+    }
     const deletedProduct = await Product.findByIdAndDelete(id);
     if (!deletedProduct) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Product not found" });
+      return this.fail("Product not found");
     }
-    res.status(200).json({ success: true, message: "Product deleted" });
-  } catch (error: any) {
-    console.error("Error deleting product:", error.message);
-    res.status(500).json({ success: false, message: "Server error" });
-  }
-};
-
-export const updateProduct = async (req: Request, res: Response) => {
-  const { id = "" } = req.params;
-  const updates = req.body;
-
-  if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res
-      .status(400)
-      .json({ success: false, message: "Invalid product ID" });
+    return this.success({ message: "Product deleted" });
   }
 
-  try {
+  @Put("{id}")
+  public async updateProduct(
+    @Path() id: string,
+    @Body() updates: Partial<ProductDto>
+  ): Promise<ApiResponse<ProductDto>> {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return this.fail("Invalid product ID");
+    }
     const updatedProduct = await Product.findByIdAndUpdate(id, updates, {
       new: true,
     });
     if (!updatedProduct) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Product not found" });
+      return this.fail("Product not found");
     }
-    res.status(200).json({ success: true, data: updatedProduct });
-  } catch (error: any) {
-    console.error("Error updating product:", error.message);
-    res.status(500).json({ success: false, message: "Server error" });
+    return this.success(updatedProduct);
   }
-};
+}
