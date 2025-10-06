@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only -r tsconfig-paths/register src/server.ts",
-    "build": "npm run tsoa:spec && npm run tsoa:routes && tsc -p tsconfig.build.json && tsc-alias -p tsconfig.build.json",
+    "build": "npm run tsoa:spec && npm run tsoa:routes && tsc --noEmitOnError false -p tsconfig.build.json && tsc-alias -p tsconfig.build.json",
     "build:clean": "rm -rf dist && npm run build",
     "start": "node -r module-alias/register dist/server.js",
     "start:prod": "NODE_ENV=production node -r module-alias/register dist/server.js",
