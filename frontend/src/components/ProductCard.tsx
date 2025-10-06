@@ -23,8 +23,7 @@ import {
 import { type FC, useState } from "react";
 
 import type { ProductDto, ProductResponseDto } from "@/api";
-
-import { useProductStore } from "../store/product";
+import { useProductStore } from "@/store/product";
 
 const ProductCard: FC<{ product: ProductResponseDto }> = ({ product }) => {
   const { name, price, image } = product;
