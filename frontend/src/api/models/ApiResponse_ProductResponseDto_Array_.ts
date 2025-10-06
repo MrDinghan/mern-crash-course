@@ -2,10 +2,10 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { ProductDto } from './ProductDto';
-export type ApiResponse_ProductDto_ = {
+import type { ProductResponseDto } from './ProductResponseDto';
+export type ApiResponse_ProductResponseDto_Array_ = {
     code: number;
     message: string;
-    data: ProductDto;
+    data: Array<ProductResponseDto>;
 };
 

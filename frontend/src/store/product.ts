@@ -1,24 +1,43 @@
 import { create } from "zustand";
 
-import type { ProductDto } from "@/api";
+import type { ProductDto, ProductResponseDto } from "@/api";
 import { ProductService } from "@/api";
 
 interface ProductStore {
-  products: ProductDto[];
-  setProducts: (products: ProductDto[]) => void;
+  products: ProductResponseDto[];
+  setProducts: (products: ProductResponseDto[]) => void;
   createProduct: (newProduct: ProductDto) => Promise<void>;
-  getProducts: () => Promise<void>;
+  fetchProducts: () => Promise<void>;
+  deleteProduct: (pid: string) => Promise<void>;
+  updateProduct: (
+    pid: string,
+    updatedProduct: Partial<ProductDto>
+  ) => Promise<void>;
 }
 
 export const useProductStore = create<ProductStore>((set) => ({
-  products: [] as ProductDto[],
-  setProducts: (products: ProductDto[]) => set({ products }),
-  createProduct: async (newProduct: ProductDto) => {
+  products: [],
+  setProducts: (products) => set({ products }),
+  createProduct: async (newProduct) => {
     const createdProduct = await ProductService.createProduct(newProduct);
     set((state) => ({ products: [...state.products, createdProduct.data] }));
   },
-  getProducts: async () => {
+  fetchProducts: async () => {
     const products = await ProductService.getProducts();
     set({ products: products.data });
+  },
+  deleteProduct: async (pid) => {
+    await ProductService.deleteProduct(pid);
+    set((state) => ({
+      products: state.products.filter((product) => product._id !== pid),
+    }));
+  },
+  updateProduct: async (pid, updatedProduct) => {
+    const { data } = await ProductService.updateProduct(pid, updatedProduct);
+    set((state) => ({
+      products: state.products.map((product) =>
+        product._id === pid ? data : product
+      ),
+    }));
   },
 }));

@@ -3,29 +3,33 @@ import { Body, Delete, Get, Path, Post, Put, Route, Tags } from "tsoa";
 
 import { ProductDto } from "@/models/product.dto";
 import Product from "@/models/product.model";
+import {
+  ProductResponseDto,
+  productTransformer,
+} from "@/models/product.response.dto";
 import { ApiResponse } from "@/types/ApiResponse";
 
-import { BaseController } from "./BaseController";
+import { BaseController } from "./base-controller";
 
 @Route("products")
 @Tags("Product")
 export class ProductController extends BaseController {
   @Get()
-  public async getProducts(): Promise<ApiResponse<ProductDto[]>> {
+  public async getProducts(): Promise<ApiResponse<ProductResponseDto[]>> {
     const products = await Product.find({});
-    return this.success(products);
+    return this.successWithTransformMany(products, productTransformer);
   }
 
   @Post()
   public async createProduct(
     @Body() productData: ProductDto
-  ): Promise<ApiResponse<ProductDto>> {
+  ): Promise<ApiResponse<ProductResponseDto>> {
     if (!productData.name || !productData.price || !productData.image) {
       return this.fail("Invalid product data");
     }
     const product = new Product(productData);
     await product.save();
-    return this.success(product);
+    return this.successWithTransformOne(product, productTransformer);
   }
 
   @Delete("{id}")
@@ -46,7 +50,7 @@ export class ProductController extends BaseController {
   public async updateProduct(
     @Path() id: string,
     @Body() updates: Partial<ProductDto>
-  ): Promise<ApiResponse<ProductDto>> {
+  ): Promise<ApiResponse<ProductResponseDto>> {
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return this.fail("Invalid product ID");
     }
@@ -56,6 +60,6 @@ export class ProductController extends BaseController {
     if (!updatedProduct) {
       return this.fail("Product not found");
     }
-    return this.success(updatedProduct);
+    return this.successWithTransformOne(updatedProduct, productTransformer);
   }
 }

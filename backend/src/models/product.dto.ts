@@ -1,6 +1,3 @@
-/**
- * Product data transfer object
- */
 export interface ProductDto {
   /**
    * Product name

@@ -2,7 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type ProductDto = {
+export type ProductResponseDto = {
     /**
      * Product name
      */
@@ -15,5 +15,17 @@ export type ProductDto = {
      * Product image URL
      */
     image: string;
+    /**
+     * MongoDB Object ID
+     */
+    _id: string;
+    /**
+     * Created timestamp
+     */
+    createdAt: string;
+    /**
+     * Updated timestamp
+     */
+    updatedAt: string;
 };
 

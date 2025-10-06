@@ -8,9 +8,10 @@ export { OpenAPI } from './core/OpenAPI';
 export type { OpenAPIConfig } from './core/OpenAPI';
 
 export type { ApiResponse__message_string__ } from './models/ApiResponse__message_string__';
-export type { ApiResponse_ProductDto_ } from './models/ApiResponse_ProductDto_';
-export type { ApiResponse_ProductDto_Array_ } from './models/ApiResponse_ProductDto_Array_';
+export type { ApiResponse_ProductResponseDto_ } from './models/ApiResponse_ProductResponseDto_';
+export type { ApiResponse_ProductResponseDto_Array_ } from './models/ApiResponse_ProductResponseDto_Array_';
 export type { Partial_ProductDto_ } from './models/Partial_ProductDto_';
 export type { ProductDto } from './models/ProductDto';
+export type { ProductResponseDto } from './models/ProductResponseDto';
 
 export { ProductService } from './services/ProductService';
